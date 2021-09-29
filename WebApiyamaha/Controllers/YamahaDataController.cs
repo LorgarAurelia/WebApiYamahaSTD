@@ -22,14 +22,14 @@ namespace WebApiyamaha.Controllers
 
         // GET: api/YamahaData
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<YamahaData>>> GetYamahaData()
+        public async Task<ActionResult<IEnumerable<Categories>>> GetYamahaData()
         {
             return await _context.YamahaData.ToListAsync();
         }
 
         // GET: api/YamahaData/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<YamahaData>> GetYamahaData(int id)
+        public async Task<ActionResult<Categories>> GetYamahaData(int id)
         {
             var yamahaData = await _context.YamahaData.FindAsync(id);
 
@@ -44,9 +44,9 @@ namespace WebApiyamaha.Controllers
         // PUT: api/YamahaData/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutYamahaData(int id, YamahaData yamahaData)
+        public async Task<IActionResult> PutYamahaData(int id, Categories yamahaData)
         {
-            if (id != yamahaData.Id)
+            if (id != yamahaData.ProductId)
             {
                 return BadRequest();
             }
@@ -75,12 +75,12 @@ namespace WebApiyamaha.Controllers
         // POST: api/YamahaData
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<YamahaData>> PostYamahaData(YamahaData yamahaData)
+        public async Task<ActionResult<Categories>> PostYamahaData(Categories yamahaData)
         {
             _context.YamahaData.Add(yamahaData);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetYamahaData), new { id = yamahaData.Id }, yamahaData);
+            return CreatedAtAction(nameof(GetYamahaData), new { id = yamahaData.ProductId }, yamahaData);
         }
 
         // DELETE: api/YamahaData/5
@@ -101,7 +101,7 @@ namespace WebApiyamaha.Controllers
 
         private bool YamahaDataExists(int id)
         {
-            return _context.YamahaData.Any(e => e.Id == id);
+            return _context.YamahaData.Any(e => e.ProductId == id);
         }
     }
 }

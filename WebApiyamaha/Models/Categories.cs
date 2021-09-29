@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace WebApiyamaha.Models
 {
-    public class YamahaData
+    public class Categories
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
         public string Displacement { get; set; }
-        public string ProductId { get; set; }
 
     }
 }
