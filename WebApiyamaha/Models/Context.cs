@@ -7,6 +7,6 @@ namespace WebApiyamaha.Models
         public Context (DbContextOptions<Context> options) 
             : base(options)
         { }
-        public DbSet<Categories> YamahaData { get; set; }
+        public DbSet<ModelsInfo> YamahaData { get; set; }
     }
 }

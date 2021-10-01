@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiyamaha.Models;
+using WebApiyamaha.Services.SQL;
 
 namespace WebApiyamaha.Controllers
 {
@@ -22,14 +23,15 @@ namespace WebApiyamaha.Controllers
 
         // GET: api/YamahaData
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categories>>> GetYamahaData()
+        public ActionResult<IEnumerable<ModelsInfo>> Categories()
         {
-            return await _context.YamahaData.ToListAsync();
+            var responce = SqlService.GetFromDataBase(nameof(Categories));
+            return Ok(responce);
         }
 
         // GET: api/YamahaData/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Categories>> GetYamahaData(int id)
+        public async Task<ActionResult<ModelsInfo>> GetYamahaData(int id)
         {
             var yamahaData = await _context.YamahaData.FindAsync(id);
 
@@ -44,9 +46,9 @@ namespace WebApiyamaha.Controllers
         // PUT: api/YamahaData/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutYamahaData(int id, Categories yamahaData)
+        public async Task<IActionResult> PutYamahaData(int id, ModelsInfo yamahaData)
         {
-            if (id != yamahaData.ProductId)
+            if (id != yamahaData.Id)
             {
                 return BadRequest();
             }
@@ -75,12 +77,12 @@ namespace WebApiyamaha.Controllers
         // POST: api/YamahaData
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Categories>> PostYamahaData(Categories yamahaData)
+        public async Task<ActionResult<ModelsInfo>> PostYamahaData(ModelsInfo yamahaData)
         {
             _context.YamahaData.Add(yamahaData);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetYamahaData), new { id = yamahaData.ProductId }, yamahaData);
+            return CreatedAtAction(nameof(GetYamahaData), new { id = yamahaData.Id }, yamahaData);
         }
 
         // DELETE: api/YamahaData/5
@@ -101,7 +103,7 @@ namespace WebApiyamaha.Controllers
 
         private bool YamahaDataExists(int id)
         {
-            return _context.YamahaData.Any(e => e.ProductId == id);
+            return _context.YamahaData.Any(e => e.Id == id);
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace WebApiyamaha.Models
 {
-    public class Categories
+    public class ModelsInfo
     {
-        public int ProductId { get; set; }
-        public string Displacement { get; set; }
+        public int Id { get; set; }
+        public string Value { get; set; }
 
     }
 }
