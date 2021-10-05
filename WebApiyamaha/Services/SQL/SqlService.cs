@@ -203,7 +203,7 @@ namespace WebApiyamaha.Services.SQL
 
             try
             {
-                int check = int.Parse(keyForSearch);
+                _ = int.Parse(keyForSearch);
             }
             catch (Exception)
             {
