@@ -16,13 +16,11 @@ namespace WebApiyamaha.Services.SQL
         /// <param name="id"></param>
         /// <param name="table"></param>
         /// <returns></returns>
-        private static string GetModelsInfo(string id = "0", string table = "empty")
+        public static List<ModelsInfo> GetModelsInfo(string id = "0", string table = "empty" )
         {
             using DBConnection sqlClient = new();
 
             List<ModelsInfo> content = new();
-
-            string json;
 
             string query = string.Empty;
 
@@ -58,8 +56,7 @@ namespace WebApiyamaha.Services.SQL
             }
             reader.Close();
 
-            json = JsonConvert.SerializeObject(content);
-            return json;
+            return content;
         }
 
         /// <summary>
@@ -67,10 +64,8 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static string GetModelsList(string id)
+        public static List<ModelsList> GetModelsList(string id)
         {
-            string json = string.Empty;
-
             using DBConnection sqlClient = new();
 
             List<ModelsList> content = new();
@@ -97,9 +92,7 @@ namespace WebApiyamaha.Services.SQL
 
             reader.Close();
 
-            json = JsonConvert.SerializeObject(content);
-
-            return json;
+            return content;
         }
 
         /// <summary>
@@ -107,14 +100,13 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static string GetCatalog(string id)
+        public static CatalogContent GetCatalog(string id)
         {
-            string json = string.Empty;
-
             using DBConnection sqlClient = new();
 
-            CatalogTitle catalogTitle = new();
-            List<PartsPosition> catalogContent = new();
+            CatalogContent content = new();
+            content.CatalogContents = new();
+            content.CatalogTitles = new();
 
             string query = $"SELECT TOP 1 cat.catalogNo, my.modelYears, v.modelTypeCode, v.productNo, v.colorType, v.colorName, mk.modelName FROM Cataloge AS cat JOIN Variants AS v ON cat.VariantId = v.Id JOIN ModelYears AS my ON v.YearsId = my.Id JOIN Models AS mk ON mk.Id = my.modelId WHERE v.Id = {id}";
 
@@ -124,12 +116,12 @@ namespace WebApiyamaha.Services.SQL
 
             while (titleReader.Read())
             {
-                catalogTitle.CatalogNo = titleReader[0].ToString().Trim();
-                catalogTitle.ModelYears = Convert.ToUInt16(titleReader[1].ToString().Trim());
-                catalogTitle.ModelTypeCode = titleReader[2].ToString().Trim();
-                catalogTitle.ProductNo = Convert.ToUInt16(titleReader[3].ToString().Trim());
-                catalogTitle.ColorType = char.Parse(titleReader[4].ToString().Trim());
-                catalogTitle.ColourName = titleReader[5].ToString().Trim();
+                content.CatalogTitles.CatalogNo = titleReader[0].ToString().Trim();
+                content.CatalogTitles.ModelYears = Convert.ToUInt16(titleReader[1].ToString().Trim());
+                content.CatalogTitles.ModelTypeCode = titleReader[2].ToString().Trim();
+                content.CatalogTitles.ProductNo = Convert.ToUInt16(titleReader[3].ToString().Trim());
+                content.CatalogTitles.ColorType = char.Parse(titleReader[4].ToString().Trim());
+                content.CatalogTitles.ColourName = titleReader[5].ToString().Trim();
             }
             titleReader.Close();
 
@@ -147,12 +139,11 @@ namespace WebApiyamaha.Services.SQL
                 row.FigName = partsReader[1].ToString().Trim();
                 row.FigNo = Convert.ToByte(partsReader[2].ToString().Trim());
 
-                catalogContent.Add(row);
+                content.CatalogContents.Add(row);
             }
             partsReader.Close();
 
-            json = JsonConvert.SerializeObject(catalogTitle) + JsonConvert.SerializeObject(catalogContent);
-            return json; 
+            return content; 
         }
 
         /// <summary>
@@ -160,10 +151,8 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static string GetPart(string id)
+        public static List<Part> GetPart(string id)
         {
-            string json = string.Empty;
-
             using DBConnection sqlClient = new();
 
             List<Part> content = new();
@@ -187,58 +176,7 @@ namespace WebApiyamaha.Services.SQL
             }
             reader.Close();
 
-            json = JsonConvert.SerializeObject(content);
-
-            return json;
-        }
-        /// <summary>
-        /// Метод сервиса определяющий к какой таблице БД необходимо получить доступ.
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="keyForSearch"></param>
-        /// <returns></returns>
-        public static string GetFromDataBase(string table, string keyForSearch = "empty")
-        {
-            string json = string.Empty;
-
-            try
-            {
-                _ = int.Parse(keyForSearch);
-            }
-            catch (Exception)
-            {
-                ModelsInfo CancelAccesToDbA = new();
-
-                CancelAccesToDbA.Id = 0;
-                CancelAccesToDbA.Value = "Error of query";
-
-                json = JsonConvert.SerializeObject(CancelAccesToDbA);
-
-                return json;
-            }
-
-            switch (table)
-            {
-                case "Categories":
-                    json = GetModelsInfo();
-                    break;
-                case "Model":
-                case "Diseplacement":
-                case "ModelYears":
-                    json = GetModelsInfo(keyForSearch, table);
-                    break;
-                case "ModelsList":
-                    json = GetModelsList(keyForSearch);
-                    break;
-                case "Catalog":
-                    json = GetCatalog(keyForSearch);
-                    break;
-                case "Part":
-                    json = GetPart(keyForSearch);
-                    break;
-            }
-            return json;
-            
+            return content;
         }
     }
 }

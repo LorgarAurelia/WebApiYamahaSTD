@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using WebApiyamaha.Models;
 using WebApiyamaha.Services.SQL;
 
 namespace WebApiyamaha.Controllers
@@ -10,63 +12,63 @@ namespace WebApiyamaha.Controllers
     {
         // GET: api/YamahaData
         [HttpGet]
-        public ActionResult<string> Categories() //ActionResult<IEnumerable<ModelsInfo>>
+        public ActionResult Categories() 
         {
-            string responce = SqlService.GetFromDataBase(nameof(Categories));
+            var responce = SqlService.GetModelsInfo();
             return Ok(responce);
         }
 
         // GET: api/YamahaData/Diseplacement/10
         [HttpGet("{id}"), Route("Diseplacement/{id}")]
-        public ActionResult<string> Diseplacement(int id)
+        public ActionResult Diseplacement(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(Diseplacement), idToString);
+            var responce = SqlService.GetModelsInfo(idToString, nameof(Diseplacement));
             return Ok(responce);
         }
 
         // GET: api/YamahaData/ModelYears/1
         [HttpGet("{id}"), Route("ModelYears/{id}")]
-        public ActionResult<string> ModelYears(int id)
+        public ActionResult ModelYears(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(ModelYears), idToString);
+            var responce = SqlService.GetModelsInfo(idToString, nameof(ModelYears));
             return Ok(responce);
         }
 
-        //GET: api/YamahaData/ModelYears/1
+        //GET: api/YamahaData/Model/1
         [HttpGet("{id}"), Route("Model/{id}")]
-        public ActionResult<string> Model(int id)
+        public ActionResult Model(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(Model), idToString);
+            var responce = SqlService.GetModelsInfo(idToString, nameof(Model));
             return Ok(responce);
         }
 
         //GET: api/YamahaData/ModelsList/1
         [HttpGet("id"), Route("ModelsList/{id}")]
-        public ActionResult<string> ModelsList(int id)
+        public ActionResult ModelsList(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(ModelsList), idToString);
+            var responce = SqlService.GetModelsList(idToString);
             return Ok(responce);
         }
 
         //GET: api/YamahaData/Catalog/1
         [HttpGet("id"), Route("Catalog/{id}")]
-        public ActionResult<string> Catalog(int id)
+        public ActionResult Catalog(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(Catalog), idToString);
+            var responce = SqlService.GetCatalog(idToString);
             return Ok(responce);
         }
 
         //GET: api/YamahaData/Part/1
         [HttpGet("id"), Route("Part/{id}")]
-        public ActionResult<string> Part(int id)
+        public ActionResult Part(int id)
         {
             string idToString = Convert.ToString(id);
-            string responce = SqlService.GetFromDataBase(nameof(Part), idToString);
+            var responce = SqlService.GetPart(idToString);
             return Ok(responce);
         }
     }
