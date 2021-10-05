@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
 using WebApiyamaha.Models;
 
 namespace WebApiyamaha
@@ -24,7 +22,7 @@ namespace WebApiyamaha
         {
             services.AddDbContext<Context>(opt =>
                                               opt.UseInMemoryDatabase("Yamaha"));
-            //services.AddControllers();
+            services.AddControllers();
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiyamaha", Version = "v1" });
@@ -45,10 +43,12 @@ namespace WebApiyamaha
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
+                /*endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");*/ //Проверить нужно ли?
+
                 endpoints.MapControllers();
             });
         }

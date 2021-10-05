@@ -18,10 +18,6 @@ namespace WebApiyamaha.Services.SQL
         {
             sqlConnection.Close();
         }
-        ~DBConnection()
-        {
-            sqlConnection.Close();
-        }
     }
 }
 
