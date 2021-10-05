@@ -20,13 +20,7 @@ namespace WebApiyamaha
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Context>(opt =>
-                                              opt.UseInMemoryDatabase("Yamaha"));
             services.AddControllers();
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiyamaha", Version = "v1" });
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,8 +29,6 @@ namespace WebApiyamaha
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiyamaha v1"));
             }
 
             app.UseHttpsRedirection();
@@ -45,10 +37,6 @@ namespace WebApiyamaha
 
             app.UseEndpoints(endpoints =>
             {
-                /*endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");*/ //Проверить нужно ли?
-
                 endpoints.MapControllers();
             });
         }

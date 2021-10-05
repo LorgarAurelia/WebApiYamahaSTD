@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApiyamaha.Models
+﻿namespace WebApiyamaha.Models
 {
     public class Part
     {
@@ -11,9 +6,9 @@ namespace WebApiyamaha.Models
         public byte RefNo { get; set; }
         public string PartNo { get; set; }
         public byte Quantity { get; set; }
-        public string Remarks 
+        public string Remarks
         {
-            get { return remarks; } 
+            get { return remarks; }
             set
             {
                 if (value.Length < 2)

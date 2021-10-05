@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using WebApiyamaha.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using WebApiyamaha.Services.SQL;
 
 namespace WebApiyamaha.Controllers
@@ -12,13 +8,6 @@ namespace WebApiyamaha.Controllers
     [ApiController]
     public class YamahaDataController : ControllerBase
     {
-        private readonly Context _context;
-
-        public YamahaDataController(Context context)
-        {
-            _context = context;
-        }
-
         // GET: api/YamahaData
         [HttpGet]
         public ActionResult<string> Categories() //ActionResult<IEnumerable<ModelsInfo>>
@@ -27,7 +16,7 @@ namespace WebApiyamaha.Controllers
             return Ok(responce);
         }
 
-        // GET: api/YamahaData/Diseplacement/1
+        // GET: api/YamahaData/Diseplacement/10
         [HttpGet("{id}"), Route("Diseplacement/{id}")]
         public ActionResult<string> Diseplacement(int id)
         {
@@ -71,7 +60,7 @@ namespace WebApiyamaha.Controllers
             string responce = SqlService.GetFromDataBase(nameof(Catalog), idToString);
             return Ok(responce);
         }
-        
+
         //GET: api/YamahaData/Part/1
         [HttpGet("id"), Route("Part/{id}")]
         public ActionResult<string> Part(int id)
@@ -79,10 +68,6 @@ namespace WebApiyamaha.Controllers
             string idToString = Convert.ToString(id);
             string responce = SqlService.GetFromDataBase(nameof(Part), idToString);
             return Ok(responce);
-        }
-        private bool YamahaDataExists(int id)
-        {
-            return _context.YamahaData.Any(e => e.Id == id);
         }
     }
 }
