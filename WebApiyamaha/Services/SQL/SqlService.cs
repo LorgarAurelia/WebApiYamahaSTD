@@ -10,37 +10,9 @@ namespace WebApiyamaha.Services.SQL
 {
     public class SqlService : DBConnection
     {
-        /// <summary>
-        /// Метод отвечающий за три таблицы, по которым идёт первичная фильтрация.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        public static List<ModelsInfo> GetModelsInfo(string id = "0", string table = "empty" )
+        private static List<ModelsInfo> ModelDataReader(string query, DBConnection sqlClient)
         {
-            using DBConnection sqlClient = new();
-
             List<ModelsInfo> content = new();
-
-            string query = string.Empty;
-
-
-            switch (table)
-            {
-                case "empty":
-                    query = "select ProductName, productId from Categories"; 
-                    break;
-                case "Diseplacement":
-                case "displacement":
-                    query = $"SELECT Displacement, id FROM Displacement where productId = {id}";
-                    break;
-                case "Model":
-                    query = $"select dispModelName, id from Models where displacementID = {id}";
-                    break;
-                case "ModelYears":
-                    query = $"select modelYears, id from ModelYears where modelId = {id}";
-                    break;
-            }
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -55,6 +27,78 @@ namespace WebApiyamaha.Services.SQL
                 content.Add(row);
             }
             reader.Close();
+
+            return content;
+        }
+        /// <summary>
+        /// Метод получает таблицу категорий.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public static List<ModelsInfo> GetCategories()
+        {
+            using DBConnection sqlClient = new();
+
+            List<ModelsInfo> content = new();
+
+            string query = "select ProductName, productId from Categories";
+
+            content = ModelDataReader(query, sqlClient);
+
+            return content;
+        }
+
+        /// <summary>
+        /// Метод получает данные по объёму двигателей в выбранной категории.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static List<ModelsInfo> GetDiseplacement(string id)
+        {
+            using DBConnection sqlClient = new();
+
+            List<ModelsInfo> content = new();
+
+            string query = $"SELECT Displacement, id FROM Displacement where productId = {id}"; 
+
+            content = ModelDataReader(query, sqlClient);
+
+            return content;
+        }
+
+        /// <summary>
+        /// Метод получает данные о всех моделях с выбранным объёмом двигателя.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static List<ModelsInfo> GetModel(string id)
+        {
+            using DBConnection sqlClient = new();
+
+            List<ModelsInfo> content = new();
+
+            string query = $"select dispModelName, id from Models where displacementID = {id}";
+
+            content = ModelDataReader(query, sqlClient);
+
+            return content;
+        }
+
+        /// <summary>
+        /// Метод получает данные о всех годах выпуска у выбранных моделей.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static List<ModelsInfo> GetYears(string id)
+        {
+            using DBConnection sqlClient = new();
+
+            List<ModelsInfo> content = new();
+
+            string query = $"select modelYears, id from ModelYears where modelId = {id}";
+
+            content = ModelDataReader(query, sqlClient);
 
             return content;
         }

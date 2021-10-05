@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using WebApiyamaha.Models;
 using WebApiyamaha.Services.SQL;
 
 namespace WebApiyamaha.Controllers
@@ -12,9 +10,9 @@ namespace WebApiyamaha.Controllers
     {
         // GET: api/YamahaData
         [HttpGet]
-        public ActionResult Categories() 
+        public ActionResult Categories()
         {
-            var responce = SqlService.GetModelsInfo();
+            var responce = SqlService.GetCategories();
             return Ok(responce);
         }
 
@@ -23,7 +21,7 @@ namespace WebApiyamaha.Controllers
         public ActionResult Diseplacement(int id)
         {
             string idToString = Convert.ToString(id);
-            var responce = SqlService.GetModelsInfo(idToString, nameof(Diseplacement));
+            var responce = SqlService.GetDiseplacement(idToString);
             return Ok(responce);
         }
 
@@ -32,7 +30,7 @@ namespace WebApiyamaha.Controllers
         public ActionResult ModelYears(int id)
         {
             string idToString = Convert.ToString(id);
-            var responce = SqlService.GetModelsInfo(idToString, nameof(ModelYears));
+            var responce = SqlService.GetYears(idToString);
             return Ok(responce);
         }
 
@@ -41,7 +39,7 @@ namespace WebApiyamaha.Controllers
         public ActionResult Model(int id)
         {
             string idToString = Convert.ToString(id);
-            var responce = SqlService.GetModelsInfo(idToString, nameof(Model));
+            var responce = SqlService.GetModel(idToString);
             return Ok(responce);
         }
 
