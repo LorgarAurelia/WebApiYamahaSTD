@@ -1,18 +1,18 @@
-﻿using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApiyamaha.Models;
+using WebApiyamaha.Services.SQL.Models;
 
 namespace WebApiyamaha.Services.SQL
 {
-    public class SqlService : DBConnection
+    public class SqlService
     {
-        private static List<ModelsInfo> ModelDataReader(string query, DBConnection sqlClient)
+        private static async Task<List<SqlDataModel>> ModelDataReader(string query, DBConnection sqlClient)
         {
-            List<ModelsInfo> content = new();
+            List<SqlDataModel> content = new();
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -20,9 +20,9 @@ namespace WebApiyamaha.Services.SQL
 
             while (reader.Read())
             {
-                ModelsInfo row = new();
-                row.Id = Convert.ToInt32(reader[1].ToString().Trim());
-                row.Value = reader[0].ToString().Trim().Replace("+", "'");
+                SqlDataModel row = new();
+                row.Id = reader[1].ToString();
+                row.Value = reader[0].ToString();
 
                 content.Add(row);
             }
@@ -36,15 +36,15 @@ namespace WebApiyamaha.Services.SQL
         /// <param name="id"></param>
         /// <param name="table"></param>
         /// <returns></returns>
-        public static List<ModelsInfo> GetCategories()
+        public static async Task<List<SqlDataModel>> GetCategoriesAsync(string sqlConnection)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            List<ModelsInfo> content = new();
+            List<SqlDataModel> content = new();
 
             string query = "select ProductName, productId from Categories";
 
-            content = ModelDataReader(query, sqlClient);
+            content = await ModelDataReader(query, sqlClient);
 
             return content;
         }
@@ -54,15 +54,15 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<ModelsInfo> GetDiseplacement(string id)
+        public static async Task<List<SqlDataModel>> GetDiseplacement(string sqlConnection,string productId)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            List<ModelsInfo> content = new();
+            List<SqlDataModel> content = new();
 
-            string query = $"SELECT Displacement, id FROM Displacement where productId = {id}"; 
+            string query = $"SELECT Displacement, id FROM Displacement where productId = {productId}";
 
-            content = ModelDataReader(query, sqlClient);
+            content = await ModelDataReader(query, sqlClient);
 
             return content;
         }
@@ -72,15 +72,15 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<ModelsInfo> GetModel(string id)
+        public static async Task<List<SqlDataModel>> GetModelAsync(string sqlConnection, string id)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            List<ModelsInfo> content = new();
+            List<SqlDataModel> content = new();
 
             string query = $"select dispModelName, id from Models where displacementID = {id}";
 
-            content = ModelDataReader(query, sqlClient);
+            content = await ModelDataReader(query, sqlClient);
 
             return content;
         }
@@ -90,15 +90,15 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<ModelsInfo> GetYears(string id)
+        public static async Task<List<SqlDataModel>> GetYearsAsync(string sqlConnection, string id)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            List<ModelsInfo> content = new();
+            List<SqlDataModel> content = new();
 
             string query = $"select modelYears, id from ModelYears where modelId = {id}";
 
-            content = ModelDataReader(query, sqlClient);
+            content = await ModelDataReader(query, sqlClient);
 
             return content;
         }
@@ -108,13 +108,13 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<ModelsList> GetModelsList(string id)
+        public static async Task<List<SqlDataModel>> GetModelsList(string sqlConnection, string id)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            List<ModelsList> content = new();
+            List<SqlDataModel> content = new();
 
-            string query = $"SELECT v.Id, my.modelYears, v.modelTypeCode, v.productNo, v.colorType, v.colorName, mk.modelName FROM Variants AS v JOIN ModelYears AS my ON v.YearsId = my.Id JOIN Models AS mk ON my.modelId = mk.Id WHERE v.YearsId = {id}";
+            string query = $"select distinct modelTypeCode, colorName, pic.Name, v.Id from Variants as v left join  Pictures as pic on v.Id = pic.VariantsId where YearsId = {id}";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -122,14 +122,12 @@ namespace WebApiyamaha.Services.SQL
 
             while (reader.Read())
             {
-                ModelsList row = new();
-                row.Id = Convert.ToInt32(reader[0].ToString().Trim());
-                row.ModelYears = Convert.ToInt32(reader[1].ToString().Trim());
-                row.ModelTypeCode = reader[2].ToString().Trim();
-                row.ProductNO = ushort.Parse(reader[3].ToString().Trim());
-                row.ColourType = char.Parse(reader[4].ToString().Trim());
-                row.ColorName = reader[5].ToString().Trim();
-                row.ModelName = reader[6].ToString().Trim();
+                SqlDataModel row = new();
+                string name = reader[0].ToString() + " ";
+                name += reader[1].ToString();
+                row.Value = name;
+                row.Image = reader[2].ToString();
+                row.Id = reader[3].ToString();
 
                 content.Add(row);
             }
@@ -144,77 +142,59 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static CatalogContent GetCatalog(string id)
+        public static async Task<List<CatalogSqlData>> GetCatalog(string sqlConnection, string id)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(sqlConnection);
 
-            CatalogContent content = new();
-            content.CatalogContents = new();
-            content.CatalogTitles = new();
+            List<CatalogSqlData> content = new();
 
-            string query = $"SELECT TOP 1 cat.catalogNo, my.modelYears, v.modelTypeCode, v.productNo, v.colorType, v.colorName, mk.modelName FROM Cataloge AS cat JOIN Variants AS v ON cat.VariantId = v.Id JOIN ModelYears AS my ON v.YearsId = my.Id JOIN Models AS mk ON mk.Id = my.modelId WHERE v.Id = {id}";
+            string query = $"select cat.Id, cat.figName, cat.figNo, cat.illustNo, pic.name from Cataloge as cat left join PartsPicture as pic on pic.catalogeId = cat.Id where cat.VariantId = {id}";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
-            SqlDataReader titleReader = command.ExecuteReader();
+            SqlDataReader reader = command.ExecuteReader();
 
-            while (titleReader.Read())
+            while (reader.Read())
             {
-                content.CatalogTitles.CatalogNo = titleReader[0].ToString().Trim();
-                content.CatalogTitles.ModelYears = Convert.ToUInt16(titleReader[1].ToString().Trim());
-                content.CatalogTitles.ModelTypeCode = titleReader[2].ToString().Trim();
-                content.CatalogTitles.ProductNo = Convert.ToUInt16(titleReader[3].ToString().Trim());
-                content.CatalogTitles.ColorType = char.Parse(titleReader[4].ToString().Trim());
-                content.CatalogTitles.ColourName = titleReader[5].ToString().Trim();
+                CatalogSqlData row = new();
+
+                row.Id = reader[0].ToString();
+                row.FigName = reader[1].ToString();
+                row.FigNo = reader[2].ToString();
+                row.IllustNo = reader[3].ToString();
+                row.PictureName = reader[4].ToString();
+
+                content.Add(row);
             }
-            titleReader.Close();
+            reader.Close();
 
-            query = $"SELECT cat.Id, cat.figName, cat.figNo FROM Cataloge AS cat JOIN Variants AS v ON cat.VariantId = v.Id JOIN ModelYears AS my ON v.YearsId = my.Id JOIN Models AS mk ON mk.Id = my.modelId WHERE v.Id = {id}";
-
-            command = new(query, sqlClient.sqlConnection);
-
-            SqlDataReader partsReader = command.ExecuteReader();
-
-            while (partsReader.Read())
-            {
-                PartsPosition row = new();
-
-                row.Id = Convert.ToUInt32(partsReader[0].ToString().Trim());
-                row.FigName = partsReader[1].ToString().Trim();
-                row.FigNo = Convert.ToByte(partsReader[2].ToString().Trim());
-
-                content.CatalogContents.Add(row);
+            return content;
             }
-            partsReader.Close();
-
-            return content; 
-        }
 
         /// <summary>
         /// Получение информации касательно конкретной запчасти в формате JSON по Id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<Part> GetPart(string id)
+        public static async Task<List<PartComponentsSql>> GetPart(string connectionString, string id)
         {
-            using DBConnection sqlClient = new();
+            using DBConnection sqlClient = new(connectionString);
 
-            List<Part> content = new();
+            List<PartComponentsSql> content = new();
 
-            string query = $"SELECT refNo,partNo,quantity,remarks,partName FROM Parts  WHERE CatalogeId = {id}";
+            string query = $"select p.partNo, p.quantity, p.remarks, p.partName from Parts as p where p.CatalogeId = {id}";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Part row = new();
+                PartComponentsSql row = new();
 
-                row.RefNo = Convert.ToByte(reader[0].ToString().Trim());
-                row.PartNo = reader[1].ToString().Trim();
-                row.Quantity = Convert.ToByte(reader[2].ToString().Trim());
-                row.Remarks = reader[3].ToString().Trim();
-                row.PartName = reader[4].ToString().Trim();
+                row.PartNo = reader[0].ToString();
+                row.Quantity = reader[1].ToString();
+                row.Remarks = reader[2].ToString();
+                row.PartName = reader[3].ToString();
 
                 content.Add(row);
             }

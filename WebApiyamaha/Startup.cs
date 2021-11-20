@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using MiddlewareExceptionPack;
+using System.Text.Json.Serialization;
+using ValidatorLib.DependencyInjection;
+using ValidatorLib.Middlewares;
+
 
 namespace WebApiyamaha
 {
@@ -18,7 +24,12 @@ namespace WebApiyamaha
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                });
+            services.AddIdxValidator(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

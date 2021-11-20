@@ -1,73 +1,62 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.ComponentModel.DataAnnotations;
 using WebApiyamaha.Services.SQL;
+using WebApiyamaha.Services.YamahaBll;
 
 namespace WebApiyamaha.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/epc/yamaha/online")]
     [ApiController]
+    [Consumes("application/json")]
     public class YamahaDataController : ControllerBase
     {
-        // GET: api/YamahaData
-        [HttpGet]
-        public ActionResult Categories()
+        private readonly IConfiguration _configuration;
+
+        public YamahaDataController(IConfiguration configuration)
         {
-            var responce = SqlService.GetCategories();
+            _configuration = configuration;
+        }
+        // GET: api/epc/yamaha/online
+        [HttpGet]
+        public ActionResult Language()
+        {
+            var responce = YamahaService.GetParametr(_configuration);
             return Ok(responce);
         }
 
-        // GET: api/YamahaData/Diseplacement/10
-        [HttpGet("{id}"), Route("Diseplacement/{id}")]
-        public ActionResult Diseplacement(int id)
+        // GET: /api/epc/yamaha/online/parameter?idx
+        [HttpGet("parameter"), Route("online/parameter")]
+        public ActionResult Parameter([FromQuery][Required] string idx)
         {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetDiseplacement(idToString);
+            if (string.IsNullOrEmpty(idx))
+                return BadRequest(404);
+
+            var responce = YamahaService.GetParametr(_configuration, idx);
             return Ok(responce);
         }
 
         // GET: api/YamahaData/ModelYears/1
-        [HttpGet("{id}"), Route("ModelYears/{id}")]
-        public ActionResult ModelYears(int id)
+        [HttpGet("parts"), Route("online/parts")]
+        public ActionResult Parts([FromQuery][Required] string idx)
         {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetYears(idToString);
+            if (string.IsNullOrEmpty(idx))
+                return BadRequest(404);
+
+            var responce = YamahaService.GetParts(_configuration, idx);
             return Ok(responce);
         }
 
-        //GET: api/YamahaData/Model/1
-        [HttpGet("{id}"), Route("Model/{id}")]
-        public ActionResult Model(int id)
-        {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetModel(idToString);
-            return Ok(responce);
-        }
+        ////GET: api/YamahaData/Model/1
+        //[HttpGet("{id}"), Route("Model/{id}")]
+        //public ActionResult Model(int id)
+        //{
+        //    string idToString = Convert.ToString(id);
+        //    var responce = SqlService.GetModel(idToString);
+        //    return Ok(responce);
+        //}
 
-        //GET: api/YamahaData/ModelsList/1
-        [HttpGet("id"), Route("ModelsList/{id}")]
-        public ActionResult ModelsList(int id)
-        {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetModelsList(idToString);
-            return Ok(responce);
-        }
-
-        //GET: api/YamahaData/Catalog/1
-        [HttpGet("id"), Route("Catalog/{id}")]
-        public ActionResult Catalog(int id)
-        {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetCatalog(idToString);
-            return Ok(responce);
-        }
-
-        //GET: api/YamahaData/Part/1
-        [HttpGet("id"), Route("Part/{id}")]
-        public ActionResult Part(int id)
-        {
-            string idToString = Convert.ToString(id);
-            var responce = SqlService.GetPart(idToString);
-            return Ok(responce);
-        }
+       
     }
 }
