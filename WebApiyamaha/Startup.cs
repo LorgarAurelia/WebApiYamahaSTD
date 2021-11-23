@@ -8,7 +8,7 @@ using MiddlewareExceptionPack;
 using System.Text.Json.Serialization;
 using ValidatorLib.DependencyInjection;
 using ValidatorLib.Middlewares;
-
+using WebApiyamaha.Services.YamahaBll.Models;
 
 namespace WebApiyamaha
 {
@@ -30,6 +30,10 @@ namespace WebApiyamaha
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
                 });
             services.AddIdxValidator(Configuration);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "YamahaApi", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +44,8 @@ namespace WebApiyamaha
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("PolicyCors");
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -47,6 +53,12 @@ namespace WebApiyamaha
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToyotaAcc API V1");
             });
         }
     }
