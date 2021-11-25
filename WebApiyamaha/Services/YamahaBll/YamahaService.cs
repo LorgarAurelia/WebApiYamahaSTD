@@ -56,7 +56,11 @@ namespace WebApiyamaha.Services.YamahaBll
                     break;
                 case RouteType.Variants:
                     sqlData = await SqlService.GetModelsList(connectionString, param.CurrentParameterId);
-                    responce = await DataWrapperService.ResponceParameter(sqlData, "variants", "Model's Colors", RouteType.PartsCataloge, true, true);
+                    responce = await DataWrapperService.ResponceParameter(sqlData, "variants", "Model's Colors", RouteType.Catalog, true, true);
+                    break;
+                case RouteType.Catalog:
+                    sqlData = await SqlService.GetCatalog(connectionString, param.CurrentParameterId);
+                    responce = await DataWrapperService.ResponceParameter(sqlData, "catalog", "Catalog", RouteType.Part, true, false);
                     break;
             }
 
@@ -67,17 +71,8 @@ namespace WebApiyamaha.Services.YamahaBll
         {
             ServiceResponce<List<PartComplexJson>> responce = new();
 
-            switch (param.Type)
-            {
-                case RouteType.PartsCataloge:
-                    var sqlData = await SqlService.GetCatalog(connectionString, param.CurrentParameterId);
-                    responce = await DataWrapperService.ResponceParts(sqlData, param);
-                    break;
-                case RouteType.Part:
-                    var DataConcreat = await SqlService.GetPart(connectionString, param.CurrentParameterId);
-                    responce = await DataWrapperService.ResponceParts(DataConcreat);
-                    break;
-            }
+            var DataConcreat = await SqlService.GetPart(connectionString, param.CurrentParameterId);
+            responce = await DataWrapperService.ResponceParts(DataConcreat);
 
             return responce;
         }

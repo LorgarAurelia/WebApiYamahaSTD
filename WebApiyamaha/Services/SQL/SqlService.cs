@@ -142,13 +142,13 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<CatalogSqlData>> GetCatalog(string sqlConnection, string id)
+        public static async Task<List<SqlDataModel>> GetCatalog(string sqlConnection, string id)
         {
             using DBConnection sqlClient = new(sqlConnection);
 
-            List<CatalogSqlData> content = new();
+            List<SqlDataModel> content = new();
 
-            string query = $"select cat.Id, cat.figName, cat.figNo, cat.illustNo, pic.name from Cataloge as cat left join PartsPicture as pic on pic.catalogeId = cat.Id where cat.VariantId = {id}";
+            string query = $"select cat.Id, cat.figName, cat.figNo from Cataloge as cat left join PartsPicture as pic on pic.catalogeId = cat.Id where cat.VariantId = {id}";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -156,14 +156,11 @@ namespace WebApiyamaha.Services.SQL
 
             while (reader.Read())
             {
-                CatalogSqlData row = new();
-
+                SqlDataModel row = new();
+                string name;
                 row.Id = reader[0].ToString();
-                row.FigName = reader[1].ToString();
-                row.FigNo = reader[2].ToString();
-                row.IllustNo = reader[3].ToString();
-                row.PictureName = reader[4].ToString();
-
+                row.Value = $@"{reader[1].ToString()} № {reader[2].ToString()}";
+                
                 content.Add(row);
             }
             reader.Close();
@@ -182,7 +179,7 @@ namespace WebApiyamaha.Services.SQL
 
             List<PartComponentsSql> content = new();
 
-            string query = $"select p.partNo, p.quantity, p.remarks, p.partName from Parts as p where p.CatalogeId = {id}";
+            string query = $"select distinct p.partNo, p.quantity, p.remarks, p.partName, pic.name from Parts as p left join PartsPicture as pic on p.CatalogeId = pic.catalogeId where p.CatalogeId = {id}";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -195,6 +192,7 @@ namespace WebApiyamaha.Services.SQL
                 row.Quantity = reader[1].ToString();
                 row.Remarks = reader[2].ToString();
                 row.PartName = reader[3].ToString();
+                row.ImageName = reader[4].ToString();
 
                 content.Add(row);
             }

@@ -25,7 +25,7 @@ namespace WebApiyamaha.Services.YamahaBll.DataWrapper
             return serviceResponce;
         }
 
-        public static async Task<ServiceResponce<List<PartComplexJson>>> ResponceParts (List<CatalogSqlData> parts, Parameter parameter)
+        public static async Task<ServiceResponce<List<PartComplexJson>>> ResponceParts (List<CatalogSqlData> parts, List<PartComponentsSql> partsComponents, Parameter parameter)
         {
             List<PartComplexJson> jsonInList = new();
             PartComplexJson json = new();
@@ -59,6 +59,7 @@ namespace WebApiyamaha.Services.YamahaBll.DataWrapper
             List<PartComplexJson> jsonInList = new();
             PartComplexJson json = new();
             json.Parts = new();
+            string imageName = string.Empty;
 
             foreach (PartComponentsSql row in parts)
             {
@@ -67,10 +68,13 @@ namespace WebApiyamaha.Services.YamahaBll.DataWrapper
                 part.Title = row.PartName;
                 part.NumberPartFormatted = row.PartNo;
                 part.Note = row.Remarks;
+                part.Quantity = row.Quantity;
+                imageName = row.ImageName;
 
                 json.Parts.Add(part);
             }
 
+            json.Image = new Image { Path = imageName };
             jsonInList.Add(json);
 
             return _ = await PartsWrapper(jsonInList);
@@ -90,7 +94,7 @@ namespace WebApiyamaha.Services.YamahaBll.DataWrapper
 
                 if (nextIsParts == false)
                     jsonValue.NextRoute = new NextRoute { Idx = idxComponents.ToIdx(), Route = RoutePath.parameter.ToString() };
-                else jsonValue.NextRoute = new NextRoute { Idx = idxComponents.ToIdx(), Route = RoutePath.parts.ToString() };
+                else jsonValue.NextRoute = new NextRoute { Idx = idxComponents.ToIdx(), Route = RoutePath.search.ToString() };
 
                 if (withPicture == true)
                     jsonValue.Image = row.Image;

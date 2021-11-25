@@ -6,6 +6,7 @@
         private string quantity;
         private string remarks;
         private string partName;
+        private string picName;
 
         public string PartNo { get => partNo; set => partNo = value.Trim(); }
         public string Quantity { get => quantity; set => quantity = value.Trim(); }
@@ -18,5 +19,6 @@
                     remarks = null;
             } }
         public string PartName { get => partName; set => partName = value.Trim(); }
+        public string ImageName { get => picName; set => picName = value.Trim(); }
     }
 }

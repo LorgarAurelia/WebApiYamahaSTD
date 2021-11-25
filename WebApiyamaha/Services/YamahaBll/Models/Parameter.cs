@@ -19,7 +19,7 @@ namespace WebApiyamaha.Services.YamahaBll.Models
         Models,
         Years,
         Variants,
-        PartsCataloge,
+        Catalog,
         Part
     }
 
