@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApiyamaha.Services.YamahaBll.Models
+﻿namespace WebApiyamaha.Services.YamahaBll.Models
 {
     public class Parameter
     {

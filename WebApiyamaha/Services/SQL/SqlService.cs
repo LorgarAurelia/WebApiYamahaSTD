@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApiyamaha.Services.SQL.Models;
 
@@ -54,7 +51,7 @@ namespace WebApiyamaha.Services.SQL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<SqlDataModel>> GetDiseplacement(string sqlConnection,string productId)
+        public static async Task<List<SqlDataModel>> GetDiseplacement(string sqlConnection, string productId)
         {
             using DBConnection sqlClient = new(sqlConnection);
 
@@ -160,13 +157,13 @@ namespace WebApiyamaha.Services.SQL
                 string name;
                 row.Id = reader[0].ToString();
                 row.Value = $@"{reader[1].ToString()} № {reader[2].ToString()}";
-                
+
                 content.Add(row);
             }
             reader.Close();
 
             return content;
-            }
+        }
 
         /// <summary>
         /// Получение информации касательно конкретной запчасти в формате JSON по Id.

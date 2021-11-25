@@ -1,8 +1,6 @@
 ﻿using Json.Library;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApiyamaha.Services.SQL;
 using WebApiyamaha.Services.SQL.Models;
@@ -24,7 +22,7 @@ namespace WebApiyamaha.Services.YamahaBll
             return _ = await DataController(connectionString, param);
         }
 
-        public static async Task<ServiceResponce<List<PartComplexJson>>> GetParts (IConfiguration configuration, string idx)
+        public static async Task<ServiceResponce<List<PartComplexJson>>> GetParts(IConfiguration configuration, string idx)
         {
             string connectionString = configuration.GetConnectionString("DataBase");
             Parameter param = idx.ToParameter();

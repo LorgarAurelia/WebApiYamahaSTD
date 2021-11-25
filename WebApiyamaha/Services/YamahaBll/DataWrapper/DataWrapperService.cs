@@ -1,7 +1,5 @@
 ﻿using Json.Library;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApiyamaha.Services.SQL.Models;
 using WebApiyamaha.Services.YamahaBll.Extensions;
@@ -18,14 +16,14 @@ namespace WebApiyamaha.Services.YamahaBll.DataWrapper
             return responce;
         }
 
-        public static async Task<ServiceResponce<List<PartComplexJson>>> PartsWrapper (List<PartComplexJson> json)
+        public static async Task<ServiceResponce<List<PartComplexJson>>> PartsWrapper(List<PartComplexJson> json)
         {
             ServiceResponce<List<PartComplexJson>> serviceResponce = new();
             serviceResponce.Data = json;
             return serviceResponce;
         }
 
-        public static async Task<ServiceResponce<List<PartComplexJson>>> ResponceParts (List<CatalogSqlData> parts, List<PartComponentsSql> partsComponents, Parameter parameter)
+        public static async Task<ServiceResponce<List<PartComplexJson>>> ResponceParts(List<CatalogSqlData> parts, List<PartComponentsSql> partsComponents, Parameter parameter)
         {
             List<PartComplexJson> jsonInList = new();
             PartComplexJson json = new();

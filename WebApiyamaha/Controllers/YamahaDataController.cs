@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.ComponentModel.DataAnnotations;
-using WebApiyamaha.Services.SQL;
 using WebApiyamaha.Services.YamahaBll;
 
 namespace WebApiyamaha.Controllers
@@ -57,6 +55,6 @@ namespace WebApiyamaha.Controllers
         //    return Ok(responce);
         //}
 
-       
+
     }
 }
