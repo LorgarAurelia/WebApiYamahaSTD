@@ -135,7 +135,7 @@ namespace WebApiyamaha.Services.SQL
         }
 
         /// <summary>
-        /// Метод получает Каталог в Формате JSON по Id.
+        /// Метод получает Каталог по Id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -145,7 +145,7 @@ namespace WebApiyamaha.Services.SQL
 
             List<SqlDataModel> content = new();
 
-            string query = $"select cat.Id, cat.figName, cat.figNo from Cataloge as cat left join PartsPicture as pic on pic.catalogeId = cat.Id where cat.VariantId = {id}";
+            string query = $"select distinct cat.Id, cat.figName, cat.figNo from Cataloge as cat left join PartsPicture as pic on pic.catalogeId = cat.Id where cat.VariantId = {id} order by cat.Id";
 
             SqlCommand command = new(query, sqlClient.sqlConnection);
 
@@ -154,7 +154,30 @@ namespace WebApiyamaha.Services.SQL
             while (reader.Read())
             {
                 SqlDataModel row = new();
-                string name;
+                row.Id = reader[0].ToString();
+                row.Value = $@"{reader[1].ToString()} № {reader[2].ToString()}";
+
+                content.Add(row);
+            }
+            reader.Close();
+
+            return content;
+        }
+
+        public static async Task<List<SqlDataModel>> SearchParts(string searchArgument, string searchType, string connectionString)
+        {
+            using DBConnection sqlClient = new(connectionString);
+            searchArgument = searchArgument.Replace("--", "");
+            List<SqlDataModel> content = new();
+            string query = $"select distinct cat.Id, cat.figName, cat.figNo from Cataloge as cat inner join Parts as p on cat.Id = p.CatalogeId left join PartsPicture as pic on pic.catalogeId = cat.Id where {searchType} like ' {searchArgument}%' order by cat.Id";
+
+            SqlCommand command = new(query, sqlClient.sqlConnection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                SqlDataModel row = new();
+
                 row.Id = reader[0].ToString();
                 row.Value = $@"{reader[1].ToString()} № {reader[2].ToString()}";
 

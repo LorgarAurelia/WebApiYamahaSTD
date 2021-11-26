@@ -29,6 +29,6 @@
     public enum SearchType
     {
         numberPart,
-        namepart
+        namePart
     }
 }

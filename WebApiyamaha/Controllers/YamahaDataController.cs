@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using WebApiyamaha.Services.YamahaBll;
 
 namespace WebApiyamaha.Controllers
@@ -18,42 +19,45 @@ namespace WebApiyamaha.Controllers
         }
         // GET: api/epc/yamaha/online
         [HttpGet]
-        public ActionResult Language()
+        public async Task<ActionResult> LanguageAsync()
         {
-            var responce = YamahaService.GetParametr(_configuration);
+            var responce = await YamahaService.GetParametr(_configuration);
             return Ok(responce);
         }
 
         // GET: /api/epc/yamaha/online/parameter?idx
         [HttpGet("parameter"), Route("online/parameter")]
-        public ActionResult Parameter([FromQuery][Required] string idx)
+        public async Task<ActionResult> ParameterAsync([FromQuery][Required] string idx)
         {
             if (string.IsNullOrEmpty(idx))
-                return BadRequest(404);
+                return BadRequest(400);
 
-            var responce = YamahaService.GetParametr(_configuration, idx);
+            var responce = await YamahaService.GetParametr(_configuration, idx);
             return Ok(responce);
         }
 
         // GET: api/YamahaData/ModelYears/1
         [HttpGet("parts"), Route("online/parts")]
-        public ActionResult Parts([FromQuery][Required] string idx)
+        public async Task<ActionResult> PartsAsync([FromQuery][Required] string idx)
         {
             if (string.IsNullOrEmpty(idx))
-                return BadRequest(404);
+                return BadRequest(400);
 
-            var responce = YamahaService.GetParts(_configuration, idx);
+            var responce = await YamahaService.GetParts(_configuration, idx);
             return Ok(responce);
         }
 
-        ////GET: api/YamahaData/Model/1
-        //[HttpGet("{id}"), Route("Model/{id}")]
-        //public ActionResult Model(int id)
-        //{
-        //    string idToString = Convert.ToString(id);
-        //    var responce = SqlService.GetModel(idToString);
-        //    return Ok(responce);
-        //}
+        [HttpGet("findpart"), Route("online/findpart")]
+        public async Task<ActionResult> FindPartAsync([FromQuery][Required] string value, [FromQuery][Required] string searchType)
+        {
+            if (string.IsNullOrEmpty(value))
+                return BadRequest(400);
+            if (string.IsNullOrEmpty(searchType))
+                return BadRequest(400);
+
+            var responce = await YamahaService.SearchParts(_configuration, value, searchType);
+            return Ok(responce);
+        }
 
 
     }

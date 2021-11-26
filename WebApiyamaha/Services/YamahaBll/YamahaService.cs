@@ -1,5 +1,7 @@
 ﻿using Json.Library;
 using Microsoft.Extensions.Configuration;
+using MiddlewareExceptionPack;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApiyamaha.Services.SQL;
@@ -28,6 +30,26 @@ namespace WebApiyamaha.Services.YamahaBll
             Parameter param = idx.ToParameter();
 
             return _ = await PartController(connectionString, param);
+        }
+
+        public static async Task<ServiceResponce<ComplexJson>> SearchParts(IConfiguration configuration, string searchArgument, string searchType)
+        {
+            if (!Enum.TryParse(searchType, out SearchType search))
+                throw new ServiceException("Неподдерживаемый тип поиска", 400);
+
+            searchType = search switch
+            {
+                SearchType.namePart => "partName",
+                SearchType.numberPart => "partNo",
+                _ => throw new ServiceException("Неподдерживаемый тип поиска", 400),
+            };
+
+            string connectionString = configuration.GetConnectionString("DataBase");
+            Parameter param = new Parameter { Type = RouteType.Catalog };
+
+            var sqlAnswer = await SqlService.SearchParts(searchArgument, searchType, connectionString);
+
+            return _ = await DataWrapperService.ResponceParameter(sqlAnswer, "catalogOnSearch", "Search part in catalog", RouteType.Part, true, false);
         }
 
         private static async Task<ServiceResponce<ComplexJson>> DataController(string connectionString, Parameter param)
